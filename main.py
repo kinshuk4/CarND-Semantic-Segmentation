@@ -115,9 +115,12 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     # loss function
     cross_entropy = tf.nn.softmax_cross_entropy_with_logits(logits=logits, labels=labels)
     cross_entropy_loss = tf.reduce_mean(cross_entropy)
+
+    reg_losses = tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+    total_loss = cross_entropy_loss + sum(reg_losses)
     # training operation
     optimizer = tf.train.AdamOptimizer(learning_rate)
-    train_op = optimizer.minimize(cross_entropy_loss)
+    train_op = optimizer.minimize(total_loss)
     return logits, train_op, cross_entropy_loss
 
 
@@ -188,7 +191,7 @@ def run():
         # DONE: Train NN using the train_nn function
         sess.run(tf.global_variables_initializer())
 
-        train_nn(sess, 20, 4, get_batches_fn, train_op, loss, 
+        train_nn(sess, 30, 4, get_batches_fn, train_op, loss,
                  input_image, label, keep_prob, learning_rate)
         # DONE: Save inference data using helper.save_inference_samples
         helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
