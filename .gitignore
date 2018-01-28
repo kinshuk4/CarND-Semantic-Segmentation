@@ -103,3 +103,5 @@ ENV/
 RUNS/
 
 .idea
+
+*.DS_Store
